@@ -1,6 +1,6 @@
-import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
+  StatusBar,
   Dimensions,
   StyleSheet,
   Text,
@@ -12,18 +12,25 @@ import {
 } from "react-native";
 import { Icon } from "react-native-elements";
 import TodoItem from "./src/components/TodoItem";
+import Swipeout from "react-native-swipeout";
 
 const windowHeight = Dimensions.get("window").height;
 
 export default function App() {
   var currentTodo = 0;
   const [todos, setTodos] = useState([[]]);
-  const [text, onChangeText] = React.useState("Useless Text");
+  const [text, onChangeText] = useState("");
+  const [todoTitles, onChangeTitle] = useState("Title");
+  const titles = [todoTitles];
+
+  function handleChangeTitle(text) {
+    onChangeTitle(text);
+    titles[currentTodo] = text;
+  }
 
   function handleCheck(id) {
     console.log("Checked");
     const newTodos = [...todos];
-    console.log(newTodos);
     const todo = newTodos[currentTodo].find((todo) => todo.key == id);
     todo.completed = !todo.completed;
     setTodos(newTodos);
@@ -56,54 +63,91 @@ export default function App() {
   function switchCurrentTodo() {
     console.log("pressed");
   }
-
+  // Buttons
+  var swipeoutBtns = [
+    {
+      text: "Button",
+    },
+  ];
   return (
     <View style={styles.container}>
-      {/* List */}
-      <ScrollView style={styles.todoList}>
-        <View style={{ height: "100%" }}>
-          {todos[currentTodo].map((todo) => (
-            <TodoItem
-              key={todo.key}
-              text={todo.name}
-              handleCheck={handleCheck}
-              id={todo.key}
-            />
-          ))}
-        </View>
-      </ScrollView>
+      {/* Menu */}
+      {/* <View></View> */}
 
-      {/* Footer input section */}
-      <View style={styles.footerContainer}>
+      {/* Main Items */}
+      <View style={styles.container}>
+        {/* Title */}
         <TextInput
-          style={styles.footerInput}
-          onChangeText={onChangeText}
-          placeholder="To do"
-          value={text}
+          style={styles.title}
+          onChangeText={handleChangeTitle}
+          placeholder="Title"
+          value={todoTitles}
         />
 
-        {/* Add Todo Button */}
-        <View style={styles.footerButton}>
-          <TouchableOpacity onPress={handleAddTodo}>
-            <Icon
-              name="add"
-              style={styles.footerButtonIcon}
-              color={"#404040"}
-              reverse
-            />
-          </TouchableOpacity>
-        </View>
+        <View
+          style={{
+            backgroundColor: "black",
+            width: "95%",
+            height: 2,
+            alignSelf: "center",
+            marginTop: 5,
+          }}
+        ></View>
 
-        {/* Remove Completed Todos Button */}
-        <View style={(styles.footerButton, { marginRight: 0 })}>
-          <TouchableOpacity onPress={handleRemoveCompletedTodos}>
-            <Icon
-              name="delete"
-              style={styles.footerButtonIcon}
-              color={"#404040"}
-              reverse
-            />
-          </TouchableOpacity>
+        <Swipeout right={swipeoutBtns} autoClose={true}>
+          <View>
+            <Text>Swipe me left</Text>
+          </View>
+        </Swipeout>
+
+        {/* List */}
+        <ScrollView style={styles.todoList}>
+          <View style={{ height: "100%" }}>
+            {todos[currentTodo].map((todo) => (
+              <TodoItem
+                key={todo.key}
+                text={todo.name}
+                handleCheck={handleCheck}
+                id={todo.key}
+              />
+            ))}
+          </View>
+        </ScrollView>
+
+        {/* Footer input section */}
+
+        <View style={{ backgroundColor: "white", height: 69 }}></View>
+        <View style={styles.footerContainer}>
+          <TextInput
+            style={styles.footerInput}
+            onChangeText={onChangeText}
+            placeholder="To do"
+            value={text}
+          />
+
+          {/* Add Todo Button */}
+          <View style={styles.footerButton}>
+            <TouchableOpacity onPress={handleAddTodo}>
+              <Icon
+                name="add"
+                style={styles.footerButtonIcon}
+                color={"#404040"}
+                reverse
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Remove Completed Todos Button */}
+          <View style={(styles.footerButton, { marginRight: 0 })}>
+            <TouchableOpacity onPress={handleRemoveCompletedTodos}>
+              <Icon
+                name="delete"
+                style={styles.footerButtonIcon}
+                color={"#404040"}
+                reverse
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
@@ -113,15 +157,20 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
   },
   todoList: {
-    marginTop: 50,
+    marginTop: 10,
     width: "95%",
-    height: 1000,
-    overflow: "visible",
+    flex: 1,
+    // overflow: "visible",
+    marginLeft: "2.5%",
+  },
+  title: {
+    marginTop: StatusBar.currentHeight + 10,
+    alignSelf: "stretch",
+    fontSize: 32,
+    fontFamily: "monospace",
+    textAlign: "center",
   },
   // Footer styles
   footerContainer: {
@@ -131,6 +180,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     position: "absolute",
     bottom: 10,
+    marginLeft: "2.5%",
   },
   footerButton: {
     justifyContent: "center",
@@ -154,5 +204,6 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "white",
     borderRadius: 10,
+    fontFamily: "monospace",
   },
 });

@@ -17,7 +17,7 @@ export default function TodoItem({ text, completed, handleCheck, id }) {
   useEffect(() => {
     Animated.timing(translation, {
       toValue: 0,
-      duration: 700,
+      duration: 1000,
       useNativeDriver: true,
     }).start();
   }, []);
@@ -33,7 +33,6 @@ export default function TodoItem({ text, completed, handleCheck, id }) {
       transform: [{ translateY: translation }],
     },
   });
-
   return (
     <Animated.View style={styles.todoView}>
       <BouncyCheckbox
@@ -45,7 +44,7 @@ export default function TodoItem({ text, completed, handleCheck, id }) {
         fillColor="#bdbdbd"
         unfillColor="#FFFFFF"
         iconStyle={{ borderColor: "bdbdbd" }}
-        textStyle={{ color: "black" }}
+        textStyle={{ color: "black", fontFamily: "monospace" }}
         text={text}
       />
     </Animated.View>
